@@ -7,8 +7,13 @@
 - Use TypeScript for frontend
 
 ## Testing Instructions
-- Find the CI plan in the .github/workflows folder.
+Do this in backend folder
+- go build ./...
+- go test ./...
 
+Do this in frontend folder
+- bun install
+- bun run build
 
 ## PR instructions
 - Title format: [<Potarin>] <Title>

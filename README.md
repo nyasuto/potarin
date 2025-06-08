@@ -42,6 +42,20 @@ ChatGPT (Codex/Custom GPT)
 
 `/frontend`, `/backend`, `/shared` ディレクトリを作成し、最小構成のアプリケーションを配置しています。
 
+## 開発の始め方
+
+1. `cp frontend/.env.local.example frontend/.env.local` を実行し、必要に応じて `NEXT_PUBLIC_API_URL` を編集します。
+2. Go サーバーを起動します。
+   ```bash
+   cd backend
+   go run main.go
+   ```
+3. フロントエンドを起動します。
+   ```bash
+   cd frontend
+   bun run dev
+   ```
+
 ## 機能一覧と実装順序
 
 ### ステージ1：MVPフェーズ

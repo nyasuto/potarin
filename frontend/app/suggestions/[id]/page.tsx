@@ -1,4 +1,5 @@
 import { Detail } from "potarin-shared/types";
+import Map from "../../components/Map";
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -22,16 +23,16 @@ export default async function SuggestionDetail({ params }: Params) {
   const detail = await getDetail(id);
 
   return (
-    <div className="p-4">
+    <div className="p-4 space-y-4">
       <h1 className="text-xl font-bold mb-4">{detail.summary}</h1>
       <ul className="space-y-2">
         {detail.routes.map((r, index) => (
           <li key={index} className="border p-2 rounded">
-            <strong>{r.title}</strong> - {r.description} ({r.position.lat},{" "}
-            {r.position.lng})
+            <strong>{r.title}</strong> - {r.description} ({r.position.lat} {r.position.lng})
           </li>
         ))}
       </ul>
+      <Map routes={detail.routes} />
     </div>
   );
 }

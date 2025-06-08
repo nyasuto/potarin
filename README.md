@@ -42,9 +42,9 @@ ChatGPT (Codex/Custom GPT)
 
 `/frontend`, `/backend`, `/shared` ディレクトリを作成し、最小構成のアプリケーションを配置しています。
 
-🗺️ 機能一覧と実装順序
+## 機能一覧と実装順序
 
-ステージ1：MVPフェーズ
+### ステージ1：MVPフェーズ
 
 ✅ プロジェクト初期化
 	•	frontend：bunx create-next-app + Tailwind + TypeScript構成
@@ -70,49 +70,46 @@ ChatGPT (Codex/Custom GPT)
 
 ⸻
 
-ステージ2：AI詳細化・ルート描画フェーズ
+### ステージ2：AI詳細化・ルート描画フェーズ
 
 ✅ 詳細APIの拡張
-	•	AIからsummary + routes[{title, description, position}]を受信
+-	AIからsummary + routes[{title, description, position}]を受信
 
 ✅ 地図描画
-	•	複数マーカー描画
-	•	Polyline描画によるルート可視化
+-	複数マーカー描画
+-	Polyline描画によるルート可視化
 
 ✅ エージェントAPIの段階的投入
-	•	OpenAI Functions API利用可能なら、Go側でエージェントスキーマ登録
-	•	CodexによるAPIスキーマ検証補助
+	-	OpenAI Functions API利用可能なら、Go側でエージェントスキーマ登録
+	-	CodexによるAPIスキーマ検証補助
 
-⸻
+### ステージ3：拡張フェーズ
 
-ステージ3：拡張フェーズ
-	•	運動量・距離制御オプション追加
-	•	ユーザー現在地(GPS)サポート
-	•	天候API連携
-	•	履歴保存・再利用機能（SQLite, PostgreSQL）
+-	運動量・距離制御オプション追加
+-	ユーザー現在地(GPS)サポート
+-	天候API連携
+-	履歴保存・再利用機能（SQLite, PostgreSQL）
 
-⸻
+### 設計・実装の注意点
 
-🎯 設計・実装の注意点
+#### AIプロンプト設計上の注意
+-	JSONスキーマを必ずAIに渡す (response_format: json_schema)
+-	一切自然文レスポンスさせない (Goのパース強靭性が最大限活きる)
 
-✅ AIプロンプト設計上の注意
-	•	JSONスキーマを必ずAIに渡す (response_format: json_schema)
-	•	一切自然文レスポンスさせない (Goのパース強靭性が最大限活きる)
+#### Goバックエンド設計上の注意
+-	Fiber (またはChi) を使った軽量APIサーバー
+-	全APIは JSON POST/GETのみ（OpenAPIスキーマで定義可）
+-	OpenAIエラーハンドリングはpanicせず安全に戻す
+-	型安全のために明示的な構造体定義を使う
 
-✅ Goバックエンド設計上の注意
-	•	Fiber (またはChi) を使った軽量APIサーバー
-	•	全APIは JSON POST/GETのみ（OpenAPIスキーマで定義可）
-	•	OpenAIエラーハンドリングはpanicせず安全に戻す
-	•	型安全のために明示的な構造体定義を使う
+#### フロント実装注意
+-	MapClientは必ずdynamic(..., { ssr: false })でSSR除外
+-	API通信時の型はsharedディレクトリからimportして厳密に管理
+-	Codexを使ってAPIスキーマ→型定義生成も可能
 
-✅ フロント実装注意
-	•	MapClientは必ずdynamic(..., { ssr: false })でSSR除外
-	•	API通信時の型はsharedディレクトリからimportして厳密に管理
-	•	Codexを使ってAPIスキーマ→型定義生成も可能
-
-📦 完成イメージ
-	•	AIが実時間で適切なサイクリングコースを提案
-	•	地図上にルートを動的に描画
-	•	ユーザーは距離・気分・天候を指定可能
-	•	バックエンドはGoが堅牢にAPI連携を処理
-	•	開発はCodexエージェントが随時補助
+## 完成イメージ
+-	AIが実時間で適切なサイクリングコースを提案
+-	地図上にルートを動的に描画
+-	ユーザーは距離・気分・天候を指定可能
+-	バックエンドはGoが堅牢にAPI連携を処理
+-	開発はCodexエージェントが随時補助

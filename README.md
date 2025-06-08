@@ -40,6 +40,8 @@ ChatGPT (Codex/Custom GPT)
 - /backend   (Go, Fiber or Chi)
 - /shared    (APIスキーマ定義, JSON Schema)
 
+`/frontend`, `/backend`, `/shared` ディレクトリを作成し、最小構成のアプリケーションを配置しています。
+
 🗺️ 機能一覧と実装順序
 
 ステージ1：MVPフェーズ

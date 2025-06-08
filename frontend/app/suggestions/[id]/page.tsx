@@ -1,7 +1,7 @@
 import { Detail } from "potarin-shared/types";
 
 interface Params {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 async function getDetail(id: string): Promise<Detail> {
@@ -16,8 +16,7 @@ async function getDetail(id: string): Promise<Detail> {
 }
 
 export default async function SuggestionDetail({ params }: Params) {
-  const { id } = await params;
-  const detail = await getDetail(id);
+  const detail = await getDetail(params.id);
 
   return (
     <div className="p-4">

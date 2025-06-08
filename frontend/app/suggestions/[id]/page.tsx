@@ -1,7 +1,7 @@
 import { Detail } from "potarin-shared/types";
 
 interface Params {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 async function getDetail(id: string): Promise<Detail> {

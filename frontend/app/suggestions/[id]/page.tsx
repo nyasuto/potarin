@@ -1,13 +1,15 @@
 import { Detail } from "potarin-shared/types";
 
 interface Params {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 async function getDetail(id: string): Promise<Detail> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"}/api/v1/details?id=${id}`,
-    { cache: "no-store" },
+    `${
+      process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
+    }/api/v1/details?id=${id}`,
+    { cache: "no-store" }
   );
   if (!res.ok) {
     throw new Error("Failed to fetch detail");
@@ -16,7 +18,8 @@ async function getDetail(id: string): Promise<Detail> {
 }
 
 export default async function SuggestionDetail({ params }: Params) {
-  const detail = await getDetail(params.id);
+  const { id } = await params;
+  const detail = await getDetail(id);
 
   return (
     <div className="p-4">

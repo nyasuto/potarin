@@ -35,5 +35,7 @@ func main() {
 		return c.JSON(details)
 	})
 
-	app.Listen(":8080")
+	if err := app.Listen(":8080"); err != nil {
+		panic(err)
+	}
 }

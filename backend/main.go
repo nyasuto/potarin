@@ -68,7 +68,7 @@ func fetchDetail(ctx context.Context, ai *internal.Client, id string) (shared.De
 	req := internal.ChatRequest{
 		Model: "gpt-4o",
 		Messages: []internal.Message{
-			{Role: "system", Content: "Return course detail as JSON." + schema},
+			{Role: "system", Content: "Return course detail as JSON.\n" + schema},
 			{Role: "user", Content: fmt.Sprintf("detail for course %s", id)},
 		},
 		ResponseFormat: internal.ResponseFormat{Type: "json_object"},

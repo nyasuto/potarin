@@ -45,7 +45,7 @@ func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Sugges
 	req := internal.ChatRequest{
 		Model: "gpt-4o",
 		Messages: []internal.Message{
-			{Role: "system", Content: "Return course suggestions as JSON." + schema},
+			{Role: "system", Content: "Return course suggestions as JSON.\n" + schema},
 			{Role: "user", Content: "Please suggest some courses."},
 		},
 		ResponseFormat: internal.ResponseFormat{Type: "json_object"},

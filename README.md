@@ -11,12 +11,12 @@
 
 ### フロントエンド
 
-Next.js 14 (App Router, TypeScript, React 18)
+Next.js 15 (App Router, TypeScript, React 19)
 bun
 
 ### バックエンド
 
-Golang
+Golang + Fiber
 
 ### AI連携
 
@@ -57,7 +57,7 @@ ChatGPT (Codex/Custom GPT)
 ## ディレクトリ構成
 
 - /frontend (Next.js, TypeScript, React)
-- /backend (Go, Fiber or Chi)
+- /backend (Go + Fiber)
 - /shared (APIスキーマ定義, JSON Schema)
 
 `/frontend`, `/backend`, `/shared` ディレクトリを作成し、最小構成のアプリケーションを配置しています。
@@ -75,59 +75,23 @@ go run .
 
 ```bash
 cd frontend
+bun install
 bun run dev
 ```
 
 環境変数 `NEXT_PUBLIC_API_URL` を設定すると、フロントエンドが参照する API サーバー URL を変更できます。
 バックエンドで OpenAI を利用する場合は、プロジェクトルートの `.env.local` に `OPENAI_API_KEY` を設定してください。
 
-## 機能一覧と実装順序
+## 現在の機能
 
-### ステージ1：MVPフェーズ
+- `/api/v1/suggestions` で AI によるコース提案を取得
+- `/api/v1/details` でコースの詳細 (summary とルート情報) を取得
+- Next.js フロントエンドで提案一覧と詳細ページを表示
 
-✅ プロジェクト初期化
-• frontend：bunx create-next-app + Tailwind + TypeScript構成
-• backend：go mod init potarin-backend + Fiber or Chi
+## 今後の予定
 
-✅ API設計 (Go)
-• /api/v1/suggestions (AI提案エンドポイント)
-• 入力: ユーザーリクエスト (天候・希望コースタイプ等)
-• 出力: JSONスキーマに準拠したAI提案コース群
-• /api/v1/details (コース詳細エンドポイント)
-• 入力: 選択されたコース概要
-• 出力: コース詳細 (waypoints + 位置情報含む)
-
-✅ AIプロンプト設計 (Codex駆動)
-• Goサーバー内でプロンプト＋JSONスキーマによるresponse_format利用
-• 型安全なOpenAI応答処理（Goでは非常に強力）
-
-✅ フロント実装
-• ヘッダー / カード型コース提案表示
-• コース選択→詳細画面遷移
-• 地図表示 (MapClient SSR排除)
-• Mapに出発地点のみマーカー描画
-
-⸻
-
-### ステージ2：AI詳細化・ルート描画フェーズ
-
-✅ 詳細APIの拡張
-
-- AIからsummary + routes[{title, description, position}]を受信
-
-✅ 地図描画
-
-- 複数マーカー描画
-- Polyline描画によるルート可視化
-
-✅ エージェントAPIの段階的投入 - OpenAI Functions API利用可能なら、Go側でエージェントスキーマ登録 - CodexによるAPIスキーマ検証補助
-
-### ステージ3：拡張フェーズ
-
-- 運動量・距離制御オプション追加
-- ユーザー現在地(GPS)サポート
-- 天候API連携
-- 履歴保存・再利用機能（SQLite, PostgreSQL）
+- 地図描画機能 (React-Leaflet)
+- ユーザー現在地連携や履歴保存などの拡張
 
 ### 設計・実装の注意点
 
@@ -138,7 +102,7 @@ bun run dev
 
 #### Goバックエンド設計上の注意
 
-- Fiber (またはChi) を使った軽量APIサーバー
+- Fiber を使った軽量APIサーバー
 - 全APIは JSON POST/GETのみ（OpenAPIスキーマで定義可）
 - OpenAIエラーハンドリングはpanicせず安全に戻す
 - 型安全のために明示的な構造体定義を使う

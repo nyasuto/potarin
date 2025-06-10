@@ -60,9 +60,6 @@ func main() {
 	}
 }
 
-var input = `
-
-`
 
 func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Suggestion, error) {
 	userProf, _ := json.Marshal(userProfile)

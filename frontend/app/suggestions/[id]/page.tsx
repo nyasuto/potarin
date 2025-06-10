@@ -17,7 +17,7 @@ async function getDetail(id: string): Promise<Detail> {
   return res.json();
 }
 
-export default async function SuggestionDetail({ params }: Params) {
+async function SuggestionDetail({ params }: Params) {
   const { id } = params;
   const detail = await getDetail(id);
 
@@ -35,3 +35,9 @@ export default async function SuggestionDetail({ params }: Params) {
     </div>
   );
 }
+
+const exported = SuggestionDetail as unknown as (
+  props: { params: Promise<{ id: string }> }
+) => Promise<any>;
+
+export default exported;

@@ -60,7 +60,6 @@ func main() {
 	}
 }
 
-
 func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Suggestion, error) {
 	userProf, err := json.Marshal(userProfile)
 	if err != nil {
@@ -70,8 +69,11 @@ func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Sugges
 	req := internal.ChatRequest{
 		Model: "gpt-4o",
 		Messages: []internal.Message{
-			{Role: "system", Content: "Return course suggestions as JSON.\n" + schema},
-			{Role: "system", Content: "あなたは親しみやすく、情報に詳しいサイクリングアドバイザーです。ユーザーのプロフィールは以下の通りです：" + string(userProf)},
+			{
+				Role: "system",
+				Content: "Return course suggestions as JSON.\n" + schema +
+					"\nあなたは親しみやすく、情報に詳しいサイクリングアドバイザーです。ユーザーのプロフィールは以下の通りです：" + string(userProf),
+			}, 
 			{Role: "user", Content: "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"},
 		},
 		ResponseFormat: internal.ResponseFormat{Type: "json_object"},

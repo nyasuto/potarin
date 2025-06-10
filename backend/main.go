@@ -5,17 +5,35 @@ import (
 	"encoding/json"
 	"fmt"
 
-        "github.com/gofiber/fiber/v2"
-        "github.com/gofiber/fiber/v2/middleware/cors"
 	"potarin-backend/internal"
 	shared "potarin-shared"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
+
+type UserProfile struct {
+	Name        string   `json:"name"`
+	Location    string   `json:"location"`
+	BikeType    string   `json:"bikeType"`
+	Level       string   `json:"level"`
+	Preferences []string `json:"preferences"`
+}
+
+// ユーザープロフィールのサンプルデータ
+var userProfile = UserProfile{
+	Name:        "サンプルユーザー",
+	Location:    "藤沢市",
+	BikeType:    "クロスバイク",
+	Level:       "初心者",
+	Preferences: []string{"海沿い", "自然", "カフェ"},
+}
 
 func main() {
 	internal.LoadEnv()
 	ai := internal.NewClient()
-        app := fiber.New()
-        app.Use(cors.New())
+	app := fiber.New()
+	app.Use(cors.New())
 
 	app.Get("/api/v1/suggestions", func(c *fiber.Ctx) error {
 		suggestions, err := fetchSuggestions(c.Context(), ai)
@@ -43,12 +61,20 @@ func main() {
 }
 
 func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Suggestion, error) {
+	userProf, err := json.Marshal(userProfile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal user profile: %w", err)
+	}
 	schema := `{"type":"object","properties":{"suggestions":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"}},"required":["id","title","description"]}}},"required":["suggestions"]}`
 	req := internal.ChatRequest{
 		Model: "gpt-4o",
 		Messages: []internal.Message{
-			{Role: "system", Content: "Return course suggestions as JSON.\n" + schema},
-			{Role: "user", Content: "Please suggest some courses."},
+			{
+				Role: "system",
+				Content: "Return course suggestions as JSON.\n" + schema +
+					"\nあなたは親しみやすく、情報に詳しいサイクリングアドバイザーです。ユーザーのプロフィールは以下の通りです：" + string(userProf),
+			}, 
+			{Role: "user", Content: "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"},
 		},
 		ResponseFormat: internal.ResponseFormat{Type: "json_object"},
 	}

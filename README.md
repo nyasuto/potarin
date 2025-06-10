@@ -79,6 +79,7 @@ bun run dev
 ```
 
 環境変数 `NEXT_PUBLIC_API_URL` を設定すると、フロントエンドが参照する API サーバー URL を変更できます。
+バックエンドで OpenAI を利用する場合は、プロジェクトルートの `.env.local` に `OPENAI_API_KEY` を設定してください。
 
 ## 機能一覧と実装順序
 

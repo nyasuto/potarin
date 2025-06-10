@@ -62,7 +62,10 @@ func main() {
 
 
 func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Suggestion, error) {
-	userProf, _ := json.Marshal(userProfile)
+	userProf, err := json.Marshal(userProfile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal user profile: %w", err)
+	}
 	schema := `{"type":"object","properties":{"suggestions":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"}},"required":["id","title","description"]}}},"required":["suggestions"]}`
 	req := internal.ChatRequest{
 		Model: "gpt-4o",

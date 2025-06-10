@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/gofiber/fiber/v2"
+        "github.com/gofiber/fiber/v2"
+        "github.com/gofiber/fiber/v2/middleware/cors"
 	"potarin-backend/internal"
 	shared "potarin-shared"
 )
@@ -13,7 +14,8 @@ import (
 func main() {
 	internal.LoadEnv()
 	ai := internal.NewClient()
-	app := fiber.New()
+        app := fiber.New()
+        app.Use(cors.New())
 
 	app.Get("/api/v1/suggestions", func(c *fiber.Ctx) error {
 		suggestions, err := fetchSuggestions(c.Context(), ai)

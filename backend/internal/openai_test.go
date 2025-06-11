@@ -12,8 +12,8 @@ import (
 
 func TestChatSuccess(t *testing.T) {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, `{"choices":[{"message":{"role":"assistant","content":"hello"}}]}`)
 	})
 	server := httptest.NewServer(handler)

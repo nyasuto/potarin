@@ -33,8 +33,7 @@ func main() {
 	internal.LoadEnv()
 	ai, err := internal.NewClient()
 	if err != nil {
-		fmt.Printf("failed to create OpenAI client: %v\n", err)
-		os.Exit(1)
+		log.Fatalf("failed to create OpenAI client: %v", err)
 	}
 	app := fiber.New()
 	app.Use(cors.New())

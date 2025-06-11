@@ -1,4 +1,5 @@
 import { Detail, Suggestion } from "potarin-shared/types";
+import MapClient from "../../components/MapClient";
 
 async function getSuggestions(): Promise<Suggestion[]> {
   const res = await fetch(
@@ -45,6 +46,9 @@ export default async function SuggestionDetail({
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">{detail.summary}</h1>
+      <div className="mb-4">
+        <MapClient routes={detail.routes} />
+      </div>
       <ul className="space-y-2">
         {detail.routes.map((r, index) => (
           <li key={index} className="border p-2 rounded">

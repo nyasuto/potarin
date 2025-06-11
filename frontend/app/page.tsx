@@ -1,4 +1,5 @@
 import { Suggestion } from "potarin-shared/types";
+import Link from "next/link";
 
 async function getSuggestions(): Promise<Suggestion[]> {
   const res = await fetch(
@@ -20,12 +21,12 @@ export default async function Home() {
       <ul className="grid gap-4">
         {suggestions.map((s) => (
           <li key={s.id} className="border p-4 rounded">
-            <a
+            <Link
               href={`/suggestions/${s.id}`}
               className="text-blue-600 hover:underline"
             >
               {s.title}
-            </a>
+            </Link>
             <p className="text-sm text-gray-600">{s.description}</p>
           </li>
         ))}

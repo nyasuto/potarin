@@ -29,8 +29,6 @@ var userProfile = UserProfile{
 	Preferences: []string{"海沿い", "自然", "カフェ"},
 }
 
-var suggestionsCache = map[string]shared.Suggestion{}
-
 func main() {
 	internal.LoadEnv()
 	ai := internal.NewClient()
@@ -46,12 +44,12 @@ func main() {
 		return c.JSON(suggestions)
 	})
 
-	app.Get("/api/v1/details", func(c *fiber.Ctx) error {
-		id := c.Query("id")
-		if id == "" {
-			return fiber.NewError(fiber.StatusBadRequest, "id required")
+	app.Post("/api/v1/details", func(c *fiber.Ctx) error {
+		var s shared.Suggestion
+		if err := c.BodyParser(&s); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
-		detail, err := fetchDetail(c.Context(), ai, id)
+		detail, err := fetchDetail(c.Context(), ai, s)
 		if err != nil {
 			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 		}
@@ -94,18 +92,10 @@ func fetchSuggestions(ctx context.Context, ai *internal.Client, userPrompt strin
 	if err := json.Unmarshal([]byte(content), &parsed); err != nil {
 		return nil, err
 	}
-	suggestionsCache = map[string]shared.Suggestion{}
-	for _, s := range parsed.Suggestions {
-		suggestionsCache[s.ID] = s
-	}
 	return parsed.Suggestions, nil
 }
 
-func fetchDetail(ctx context.Context, ai *internal.Client, id string) (shared.Detail, error) {
-	suggestion, ok := suggestionsCache[id]
-	if !ok {
-		return shared.Detail{}, fmt.Errorf("suggestion not found")
-	}
+func fetchDetail(ctx context.Context, ai *internal.Client, suggestion shared.Suggestion) (shared.Detail, error) {
 	schema := `{"type":"object","properties":{"summary":{"type":"string"},"routes":{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"description":{"type":"string"},"position":{"type":"object","properties":{"lat":{"type":"number"},"lng":{"type":"number"}},"required":["lat","lng"]}},"required":["title","description","position"]}}},"required":["summary","routes"]}`
 	userPrompt := fmt.Sprintf("タイトル: %s\n説明: %s\nこのコースの詳細を教えてください。", suggestion.Title, suggestion.Description)
 	req := internal.ChatRequest{

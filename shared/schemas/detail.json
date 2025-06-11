@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Detail",
+  "type": "object",
+  "properties": {
+    "summary": { "type": "string" },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "position": {
+            "type": "object",
+            "properties": {
+              "lat": { "type": "number" },
+              "lng": { "type": "number" }
+            },
+            "required": ["lat", "lng"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["title", "description", "position"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["summary", "routes"],
+  "additionalProperties": false
+}

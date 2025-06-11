@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"potarin-backend/internal"
 	shared "potarin-shared"

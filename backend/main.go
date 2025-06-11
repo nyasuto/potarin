@@ -8,6 +8,7 @@ import (
 
 	"potarin-backend/internal"
 	shared "potarin-shared"
+	schemas "potarin-shared/schemas"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -74,7 +75,7 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal user profile: %w", err)
 	}
-	schema := `{"type":"object","properties":{"suggestions":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"}},"required":["id","title","description"]}}},"required":["suggestions"]}`
+	schema := schemas.SuggestionSchema
 	if userPrompt == "" {
 		userPrompt = "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"
 	}
@@ -104,7 +105,7 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 }
 
 func fetchDetail(ctx context.Context, ai AIClient, suggestion shared.Suggestion) (shared.Detail, error) {
-	schema := `{"type":"object","properties":{"summary":{"type":"string"},"routes":{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"description":{"type":"string"},"position":{"type":"object","properties":{"lat":{"type":"number"},"lng":{"type":"number"}},"required":["lat","lng"]}},"required":["title","description","position"]}}},"required":["summary","routes"]}`
+	schema := schemas.DetailSchema
 	userPrompt := fmt.Sprintf("タイトル: %s\n説明: %s\nこのコースの詳細を教えてください。", suggestion.Title, suggestion.Description)
 	req := internal.ChatRequest{
 		Model: "gpt-4o",

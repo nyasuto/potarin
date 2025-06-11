@@ -29,8 +29,12 @@ async function getDetail(s: Suggestion): Promise<Detail> {
   return res.json();
 }
 
-export default async function SuggestionDetail({ params }: { params: any }) {
-  const { id } = params;
+export default async function SuggestionDetail({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   const suggestions = await getSuggestions();
   const suggestion = suggestions.find((s) => s.id === id);
   if (!suggestion) {

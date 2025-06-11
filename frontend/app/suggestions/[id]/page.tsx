@@ -1,5 +1,9 @@
 import { Detail, Suggestion } from "potarin-shared/types";
 
+interface Params {
+  id: string;
+}
+
 async function getSuggestions(): Promise<Suggestion[]> {
   const res = await fetch(
     `${
@@ -29,7 +33,7 @@ async function getDetail(s: Suggestion): Promise<Detail> {
   return res.json();
 }
 
-export default async function SuggestionDetail({ params }: { params: any }) {
+export default async function SuggestionDetail({ params }: { params: { id: string } }) {
   const { id } = params;
   const suggestions = await getSuggestions();
   const suggestion = suggestions.find((s) => s.id === id);

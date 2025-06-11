@@ -30,7 +30,7 @@ func TestChatSuccess(t *testing.T) {
 		t.Fatalf("Chat returned error: %v", err)
 	}
 	if content != "hello" {
-		t.Fatalf("expected 'hello', got %s", content)
+		t.Fatalf("expected 'hello', got %q", content)
 	}
 }
 

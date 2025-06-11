@@ -1,15 +1,27 @@
-import { Detail } from "potarin-shared/types";
+import { Detail, Suggestion } from "potarin-shared/types";
 
-interface Params {
-  params: Promise<{ id: string }>;
-}
-
-async function getDetail(id: string): Promise<Detail> {
+async function getSuggestions(): Promise<Suggestion[]> {
   const res = await fetch(
     `${
       process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
-    }/api/v1/details?id=${id}`,
-    { cache: "no-store" }
+    }/api/v1/suggestions`,
+    { cache: "no-store" },
+  );
+  if (!res.ok) {
+    throw new Error("Failed to fetch suggestions");
+  }
+  return res.json();
+}
+
+async function getDetail(s: Suggestion): Promise<Detail> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"}/api/v1/details`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(s),
+      cache: "no-store",
+    },
   );
   if (!res.ok) {
     throw new Error("Failed to fetch detail");
@@ -17,9 +29,14 @@ async function getDetail(id: string): Promise<Detail> {
   return res.json();
 }
 
-export default async function SuggestionDetail({ params }: Params) {
-  const { id } = await params;
-  const detail = await getDetail(id);
+export default async function SuggestionDetail({ params }: { params: any }) {
+  const { id } = params;
+  const suggestions = await getSuggestions();
+  const suggestion = suggestions.find((s) => s.id === id);
+  if (!suggestion) {
+    throw new Error("Suggestion not found");
+  }
+  const detail = await getDetail(suggestion);
 
   return (
     <div className="p-4">

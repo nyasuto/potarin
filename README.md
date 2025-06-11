@@ -85,7 +85,7 @@ bun run dev
 ## 現在の機能
 
 - `/api/v1/suggestions` で AI によるコース提案を取得
-- `/api/v1/details` でコースの詳細 (summary とルート情報) を取得
+- `POST /api/v1/details` でコースの詳細 (summary とルート情報) を取得
 - Next.js フロントエンドで提案一覧と詳細ページを表示
 
 ## 今後の予定

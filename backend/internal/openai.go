@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -9,7 +8,8 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 type Client struct {
@@ -41,22 +41,7 @@ type chatResponse struct {
 
 // LoadEnv loads environment variables from .env.local if present.
 func LoadEnv() {
-	f, err := os.Open(".env.local")
-	if err != nil {
-		return
-	}
-	defer f.Close()
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" || strings.HasPrefix(line, "#") {
-			continue
-		}
-		parts := strings.SplitN(line, "=", 2)
-		if len(parts) == 2 {
-			os.Setenv(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
-		}
-	}
+	_ = godotenv.Load(".env.local")
 }
 
 // NewClient creates a new OpenAI client using environment variables.

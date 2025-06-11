@@ -5,6 +5,7 @@
 ## Dev Environment Tips
 - Use golang for backend
 - Use TypeScript for frontend
+- When adding new npm package, run `bun add <npm package>` instead
 
 ## Testing Instructions
 Do this in backend folder

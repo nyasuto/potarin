@@ -41,7 +41,12 @@ type chatResponse struct {
 
 // LoadEnv loads environment variables from .env.local if present.
 func LoadEnv() {
-	_ = godotenv.Load(".env.local")
+	if err := godotenv.Load(".env.local"); err != nil {
+		if !os.IsNotExist(err) {
+			// Log or print the error if it's not a "file not found" error
+			fmt.Printf("Error loading .env.local: %v\n", err)
+		}
+	}
 }
 
 // NewClient creates a new OpenAI client using environment variables.

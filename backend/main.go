@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"potarin-backend/internal"
 	shared "potarin-shared"
@@ -31,7 +32,10 @@ var userProfile = UserProfile{
 
 func main() {
 	internal.LoadEnv()
-	ai := internal.NewClient()
+	ai, err := internal.NewClient()
+	if err != nil {
+		log.Fatalf("failed to create OpenAI client: %v", err)
+	}
 	app := fiber.New()
 	app.Use(cors.New())
 

@@ -51,12 +51,17 @@ func LoadEnv() {
 }
 
 // NewClient creates a new OpenAI client using environment variables.
-func NewClient() *Client {
+// It returns an error if the API key is empty.
+func NewClient() (*Client, error) {
+	key := os.Getenv("OPENAI_API_KEY")
+	if key == "" {
+		return nil, fmt.Errorf("OPENAI_API_KEY is not set")
+	}
 	return &Client{
-		apiKey:     os.Getenv("OPENAI_API_KEY"),
+		apiKey:     key,
 		baseURL:    "https://api.openai.com",
 		httpClient: &http.Client{},
-	}
+	}, nil
 }
 
 // Chat sends a chat completion request and returns the first message content.

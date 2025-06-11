@@ -29,6 +29,8 @@ var userProfile = UserProfile{
 	Preferences: []string{"海沿い", "自然", "カフェ"},
 }
 
+var suggestionsCache = map[string]shared.Suggestion{}
+
 func main() {
 	internal.LoadEnv()
 	ai := internal.NewClient()
@@ -36,7 +38,8 @@ func main() {
 	app.Use(cors.New())
 
 	app.Get("/api/v1/suggestions", func(c *fiber.Ctx) error {
-		suggestions, err := fetchSuggestions(c.Context(), ai)
+		prompt := c.Query("prompt")
+		suggestions, err := fetchSuggestions(c.Context(), ai, prompt)
 		if err != nil {
 			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 		}
@@ -60,12 +63,15 @@ func main() {
 	}
 }
 
-func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Suggestion, error) {
+func fetchSuggestions(ctx context.Context, ai *internal.Client, userPrompt string) ([]shared.Suggestion, error) {
 	userProf, err := json.Marshal(userProfile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal user profile: %w", err)
 	}
 	schema := `{"type":"object","properties":{"suggestions":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"}},"required":["id","title","description"]}}},"required":["suggestions"]}`
+	if userPrompt == "" {
+		userPrompt = "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"
+	}
 	req := internal.ChatRequest{
 		Model: "gpt-4o",
 		Messages: []internal.Message{
@@ -73,8 +79,8 @@ func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Sugges
 				Role: "system",
 				Content: "Return course suggestions as JSON.\n" + schema +
 					"\nあなたは親しみやすく、情報に詳しいサイクリングアドバイザーです。ユーザーのプロフィールは以下の通りです：" + string(userProf),
-			}, 
-			{Role: "user", Content: "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"},
+			},
+			{Role: "user", Content: userPrompt},
 		},
 		ResponseFormat: internal.ResponseFormat{Type: "json_object"},
 	}
@@ -88,16 +94,25 @@ func fetchSuggestions(ctx context.Context, ai *internal.Client) ([]shared.Sugges
 	if err := json.Unmarshal([]byte(content), &parsed); err != nil {
 		return nil, err
 	}
+	suggestionsCache = map[string]shared.Suggestion{}
+	for _, s := range parsed.Suggestions {
+		suggestionsCache[s.ID] = s
+	}
 	return parsed.Suggestions, nil
 }
 
 func fetchDetail(ctx context.Context, ai *internal.Client, id string) (shared.Detail, error) {
+	suggestion, ok := suggestionsCache[id]
+	if !ok {
+		return shared.Detail{}, fmt.Errorf("suggestion not found")
+	}
 	schema := `{"type":"object","properties":{"summary":{"type":"string"},"routes":{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"description":{"type":"string"},"position":{"type":"object","properties":{"lat":{"type":"number"},"lng":{"type":"number"}},"required":["lat","lng"]}},"required":["title","description","position"]}}},"required":["summary","routes"]}`
+	userPrompt := fmt.Sprintf("タイトル: %s\n説明: %s\nこのコースの詳細を教えてください。", suggestion.Title, suggestion.Description)
 	req := internal.ChatRequest{
 		Model: "gpt-4o",
 		Messages: []internal.Message{
 			{Role: "system", Content: "Return course detail as JSON.\n" + schema},
-			{Role: "user", Content: fmt.Sprintf("detail for course %s", id)},
+			{Role: "user", Content: userPrompt},
 		},
 		ResponseFormat: internal.ResponseFormat{Type: "json_object"},
 	}

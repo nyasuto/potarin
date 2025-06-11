@@ -61,7 +61,11 @@ func main() {
 	}
 }
 
-func fetchSuggestions(ctx context.Context, ai *internal.Client, userPrompt string) ([]shared.Suggestion, error) {
+type AIClient interface {
+	Chat(ctx context.Context, req internal.ChatRequest) (string, error)
+}
+
+func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]shared.Suggestion, error) {
 	userProf, err := json.Marshal(userProfile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal user profile: %w", err)
@@ -95,7 +99,7 @@ func fetchSuggestions(ctx context.Context, ai *internal.Client, userPrompt strin
 	return parsed.Suggestions, nil
 }
 
-func fetchDetail(ctx context.Context, ai *internal.Client, suggestion shared.Suggestion) (shared.Detail, error) {
+func fetchDetail(ctx context.Context, ai AIClient, suggestion shared.Suggestion) (shared.Detail, error) {
 	schema := `{"type":"object","properties":{"summary":{"type":"string"},"routes":{"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"description":{"type":"string"},"position":{"type":"object","properties":{"lat":{"type":"number"},"lng":{"type":"number"}},"required":["lat","lng"]}},"required":["title","description","position"]}}},"required":["summary","routes"]}`
 	userPrompt := fmt.Sprintf("タイトル: %s\n説明: %s\nこのコースの詳細を教えてください。", suggestion.Title, suggestion.Description)
 	req := internal.ChatRequest{

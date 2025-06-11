@@ -31,7 +31,11 @@ var userProfile = UserProfile{
 
 func main() {
 	internal.LoadEnv()
-	ai := internal.NewClient()
+	ai, err := internal.NewClient()
+	if err != nil {
+		fmt.Printf("failed to create OpenAI client: %v\n", err)
+		return
+	}
 	app := fiber.New()
 	app.Use(cors.New())
 

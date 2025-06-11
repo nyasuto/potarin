@@ -1,15 +1,16 @@
 package internal
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 type Client struct {
@@ -41,20 +42,10 @@ type chatResponse struct {
 
 // LoadEnv loads environment variables from .env.local if present.
 func LoadEnv() {
-	f, err := os.Open(".env.local")
-	if err != nil {
-		return
-	}
-	defer f.Close()
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" || strings.HasPrefix(line, "#") {
-			continue
-		}
-		parts := strings.SplitN(line, "=", 2)
-		if len(parts) == 2 {
-			os.Setenv(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+	if err := godotenv.Load(".env.local"); err != nil {
+		if !os.IsNotExist(err) {
+			// Log or print the error if it's not a "file not found" error
+			fmt.Printf("Error loading .env.local: %v\n", err)
 		}
 	}
 }

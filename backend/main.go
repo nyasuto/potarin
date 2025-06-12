@@ -75,7 +75,7 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal user profile: %w", err)
 	}
-	schema := schemas.SuggestionSchema
+	schema := schemas.SuggestionsSchema
 	if userPrompt == "" {
 		userPrompt = "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"
 	}

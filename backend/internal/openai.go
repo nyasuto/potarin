@@ -24,8 +24,17 @@ type Message struct {
 	Content string `json:"content"`
 }
 
+// JSONSchemaConfig represents a schema configuration for structured outputs.
+type JSONSchemaConfig struct {
+	Name   string          `json:"name,omitempty"`
+	Schema json.RawMessage `json:"schema,omitempty"`
+	Strict bool            `json:"strict,omitempty"`
+}
+
+// ResponseFormat specifies how the model should format its response.
 type ResponseFormat struct {
-	Type string `json:"type"`
+	Type       string            `json:"type"`
+	JSONSchema *JSONSchemaConfig `json:"json_schema,omitempty"`
 }
 
 type ChatRequest struct {

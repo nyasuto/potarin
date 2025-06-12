@@ -5,7 +5,17 @@
   "properties": {
     "suggestions": {
       "type": "array",
-      "items": { "$ref": "./suggestion.json" }
+      "items": {
+        "title": "Suggestion",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["id", "title", "description"],
+        "additionalProperties": false
+      }
     }
   },
   "required": ["suggestions"],

@@ -33,15 +33,19 @@ var userProfile = UserProfile{
 
 func main() {
 	internal.LoadEnv()
+	log.Println("environment variables loaded")
 	ai, err := internal.NewClient()
 	if err != nil {
 		log.Fatalf("failed to create OpenAI client: %v", err)
 	}
+	log.Println("OpenAI client initialized")
 	app := fiber.New()
+	log.Println("fiber app initialized")
 	app.Use(cors.New())
 
 	app.Get("/api/v1/suggestions", func(c *fiber.Ctx) error {
 		prompt := c.Query("prompt")
+		log.Printf("received suggestions request: %s", prompt)
 		suggestions, err := fetchSuggestions(c.Context(), ai, prompt)
 		if err != nil {
 			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
@@ -54,6 +58,7 @@ func main() {
 		if err := c.BodyParser(&s); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
+		log.Printf("received detail request for: %s", s.Title)
 		detail, err := fetchDetail(c.Context(), ai, s)
 		if err != nil {
 			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
@@ -61,6 +66,7 @@ func main() {
 		return c.JSON(detail)
 	})
 
+	log.Println("server listening on :8080")
 	if err := app.Listen(":8080"); err != nil {
 		panic(err)
 	}
@@ -78,6 +84,7 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 	if userPrompt == "" {
 		userPrompt = "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"
 	}
+	log.Printf("fetching suggestions with prompt: %s", userPrompt)
 	req := internal.ChatRequest{
 		Model: internal.GetModel(),
 		Messages: []internal.Message{
@@ -114,11 +121,13 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 	if parsed.Suggestions == nil {
 		return []shared.Suggestion{}, nil
 	}
+	log.Printf("parsed %d suggestions", len(parsed.Suggestions))
 	return parsed.Suggestions, nil
 }
 
 func fetchDetail(ctx context.Context, ai AIClient, suggestion shared.Suggestion) (shared.Detail, error) {
 	userPrompt := fmt.Sprintf("タイトル: %s\n説明: %s\nこのコースの詳細を教えてください。", suggestion.Title, suggestion.Description)
+	log.Printf("fetching detail for: %s", suggestion.Title)
 	req := internal.ChatRequest{
 		Model: internal.GetModel(),
 		Messages: []internal.Message{
@@ -142,5 +151,6 @@ func fetchDetail(ctx context.Context, ai AIClient, suggestion shared.Suggestion)
 	if err := json.Unmarshal([]byte(content), &detail); err != nil {
 		return shared.Detail{}, err
 	}
+	log.Println("detail parsed successfully")
 	return detail, nil
 }

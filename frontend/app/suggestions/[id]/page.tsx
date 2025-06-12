@@ -1,10 +1,9 @@
 import { Detail, Suggestion } from "potarin-shared/types";
+import Map from "./MapClient";
 
 async function getSuggestions(): Promise<Suggestion[]> {
   const res = await fetch(
-    `${
-      process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"
-    }/api/v1/suggestions`,
+    `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080"}/api/v1/suggestions`,
     { cache: "no-store" },
   );
   if (!res.ok) {
@@ -29,6 +28,7 @@ async function getDetail(s: Suggestion): Promise<Detail> {
   return res.json();
 }
 
+
 export default async function SuggestionDetail({
   params,
 }: {
@@ -43,13 +43,13 @@ export default async function SuggestionDetail({
   const detail = await getDetail(suggestion);
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">{detail.summary}</h1>
+    <div className="p-4 space-y-4">
+      <h1 className="text-xl font-bold">{detail.summary}</h1>
+      <Map detail={detail} />
       <ul className="space-y-2">
         {detail.routes.map((r, index) => (
           <li key={index} className="border p-2 rounded">
-            <strong>{r.title}</strong> - {r.description} ({r.position.lat},{" "}
-            {r.position.lng})
+            <strong>{r.title}</strong> - {r.description} ({r.position.lat}, {r.position.lng})
           </li>
         ))}
       </ul>

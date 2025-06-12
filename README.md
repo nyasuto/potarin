@@ -89,10 +89,10 @@ bun run dev
 - `/api/v1/suggestions` で AI によるコース提案を取得
 - `POST /api/v1/details` でコースの詳細 (summary とルート情報) を取得
 - Next.js フロントエンドで提案一覧と詳細ページを表示
+- React-Leaflet でルートを地図描画
 
 ## 今後の予定
 
-- 地図描画機能 (React-Leaflet)
 - ユーザー現在地連携や履歴保存などの拡張
 
 ### 設計・実装の注意点

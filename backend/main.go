@@ -15,11 +15,12 @@ import (
 )
 
 type UserProfile struct {
-	Name        string   `json:"name"`
-	Location    string   `json:"location"`
-	BikeType    string   `json:"bikeType"`
-	Level       string   `json:"level"`
-	Preferences []string `json:"preferences"`
+	Name        string          `json:"name"`
+	Location    string          `json:"location"`
+	BikeType    string          `json:"bikeType"`
+	Level       string          `json:"level"`
+	Preferences []string        `json:"preferences"`
+	Position    shared.Position `json:"position"`
 }
 
 // ユーザープロフィールのサンプルデータ
@@ -29,6 +30,7 @@ var userProfile = UserProfile{
 	BikeType:    "クロスバイク",
 	Level:       "初心者",
 	Preferences: []string{"海沿い", "自然", "カフェ"},
+	Position:    shared.Position{},
 }
 
 func main() {
@@ -64,6 +66,16 @@ func main() {
 			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 		}
 		return c.JSON(detail)
+	})
+
+	app.Post("/api/v1/location", func(c *fiber.Ctx) error {
+		var pos shared.Position
+		if err := c.BodyParser(&pos); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+		userProfile.Position = pos
+		userProfile.Location = fmt.Sprintf("%f,%f", pos.Lat, pos.Lng)
+		return c.SendStatus(fiber.StatusOK)
 	})
 
 	log.Println("server listening on :8080")

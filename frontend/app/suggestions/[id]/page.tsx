@@ -1,5 +1,6 @@
 import { Detail, Suggestion } from "potarin-shared/types";
 import { ensureUniqueIds } from "../../../lib/ensureUniqueIds";
+import RouteMap from "../../../components/RouteMap";
 
 async function getSuggestions(): Promise<Suggestion[]> {
   const res = await fetch(
@@ -47,6 +48,7 @@ export default async function SuggestionDetail({
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">{detail.summary}</h1>
+      <RouteMap routes={detail.routes} />
       <ul className="space-y-2">
         {detail.routes.map((r, index) => (
           <li key={index} className="border p-2 rounded">

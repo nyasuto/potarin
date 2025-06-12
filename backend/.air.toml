@@ -1,0 +1,10 @@
+# Config file for Air - https://github.com/cosmtrek/air
+root = "."
+
+[build]
+  cmd = "go build -o ./tmp/main ."
+  bin = "./tmp/main"
+  include_ext = ["go"]
+  exclude_dir = ["tmp"]
+  exclude_file = ["*_test.go"]
+  delay = 1000

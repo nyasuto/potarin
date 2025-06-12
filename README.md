@@ -32,7 +32,7 @@ Tailwind CSS
 
 ### ビルド・開発
 
-Bun (フロント用) / Go modules
+Bun (フロント用) / Go modules + Air (ホットリロード)
 
 ### デプロイ
 
@@ -64,11 +64,12 @@ ChatGPT (Codex/Custom GPT)
 
 ## クイックスタート
 
-1. `backend` ディレクトリで Go サーバーを起動
+1. `backend` をホットリロード起動 (Air を利用)
 
 ```bash
+go install github.com/cosmtrek/air@latest # 初回のみ
 cd backend
-go run .
+air
 ```
 
 2. 別ターミナルで `frontend` を起動

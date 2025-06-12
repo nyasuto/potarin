@@ -9,7 +9,8 @@ async function getSuggestions(): Promise<Suggestion[]> {
   if (!res.ok) {
     throw new Error("Failed to fetch suggestions");
   }
-  return res.json();
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
 }
 
 export default async function Home() {

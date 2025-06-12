@@ -101,6 +101,9 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 	if err := json.Unmarshal([]byte(content), &parsed); err != nil {
 		return nil, err
 	}
+	if parsed.Suggestions == nil {
+		return []shared.Suggestion{}, nil
+	}
 	return parsed.Suggestions, nil
 }
 

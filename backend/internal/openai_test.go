@@ -63,3 +63,17 @@ func TestNewClientEmptyKey(t *testing.T) {
 
 	}
 }
+
+func TestGetModelFromEnv(t *testing.T) {
+	t.Setenv("OPENAI_MODEL", "test-model")
+	if got := GetModel(); got != "test-model" {
+		t.Fatalf("expected 'test-model', got %q", got)
+	}
+}
+
+func TestGetModelFallback(t *testing.T) {
+	t.Setenv("OPENAI_MODEL", "")
+	if got := GetModel(); got != "gpt-4o-mini" {
+		t.Fatalf("expected fallback 'gpt-4o-mini', got %q", got)
+	}
+}

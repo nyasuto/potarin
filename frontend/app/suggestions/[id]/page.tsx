@@ -1,4 +1,5 @@
 import { Detail, Suggestion } from "potarin-shared/types";
+import { ensureUniqueIds } from "../../../lib/ensureUniqueIds";
 
 async function getSuggestions(): Promise<Suggestion[]> {
   const res = await fetch(
@@ -36,7 +37,7 @@ export default async function SuggestionDetail({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const suggestions = await getSuggestions();
+  const suggestions = ensureUniqueIds(await getSuggestions());
   const suggestion = suggestions.find((s) => s.id === id);
   if (!suggestion) {
     throw new Error("Suggestion not found");

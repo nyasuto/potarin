@@ -1,5 +1,6 @@
 import { Suggestion } from "potarin-shared/types";
 import Link from "next/link";
+import { ensureUniqueIds } from "../lib/ensureUniqueIds";
 
 async function getSuggestions(): Promise<Suggestion[]> {
   const res = await fetch(
@@ -14,7 +15,7 @@ async function getSuggestions(): Promise<Suggestion[]> {
 }
 
 export default async function Home() {
-  const suggestions = await getSuggestions();
+  const suggestions = ensureUniqueIds(await getSuggestions());
 
   return (
     <div className="p-4">

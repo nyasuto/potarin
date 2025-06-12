@@ -3,9 +3,9 @@ module potarin-backend
 go 1.23.8
 
 require (
-        github.com/gofiber/fiber/v2 v2.52.8
-        github.com/joho/godotenv v1.0.0
-        potarin-shared v0.0.0
+	github.com/gofiber/fiber/v2 v2.52.8
+	github.com/joho/godotenv v1.5.1
+	potarin-shared v0.0.0
 )
 
 require (
@@ -23,4 +23,3 @@ require (
 )
 
 replace potarin-shared => ../shared
-replace github.com/joho/godotenv => ../godotenv

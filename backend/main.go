@@ -75,7 +75,6 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal user profile: %w", err)
 	}
-	schema := schemas.SuggestionsSchema
 	if userPrompt == "" {
 		userPrompt = "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"
 	}
@@ -84,12 +83,19 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 		Messages: []internal.Message{
 			{
 				Role: "system",
-				Content: "Return course suggestions as JSON.\n" + schema +
-					"\nあなたは親しみやすく、情報に詳しいサイクリングアドバイザーです。ユーザーのプロフィールは以下の通りです：" + string(userProf),
+				Content: "Return course suggestions as JSON.\n" +
+					"あなたは親しみやすく、情報に詳しいサイクリングアドバイザーです。ユーザーのプロフィールは以下の通りです：" + string(userProf),
 			},
 			{Role: "user", Content: userPrompt},
 		},
-		ResponseFormat: internal.ResponseFormat{Type: "json_object"},
+		ResponseFormat: internal.ResponseFormat{
+			Type: "json_schema",
+			JSONSchema: &internal.JSONSchemaConfig{
+				Name:   "Suggestions",
+				Schema: json.RawMessage(schemas.SuggestionsSchema),
+				Strict: true,
+			},
+		},
 	}
 	log.Print(req)
 	content, err := ai.Chat(ctx, req)
@@ -111,15 +117,21 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 }
 
 func fetchDetail(ctx context.Context, ai AIClient, suggestion shared.Suggestion) (shared.Detail, error) {
-	schema := schemas.DetailSchema
 	userPrompt := fmt.Sprintf("タイトル: %s\n説明: %s\nこのコースの詳細を教えてください。", suggestion.Title, suggestion.Description)
 	req := internal.ChatRequest{
 		Model: "gpt-4o",
 		Messages: []internal.Message{
-			{Role: "system", Content: "Return course detail as JSON.\n" + schema},
+			{Role: "system", Content: "Return course detail as JSON."},
 			{Role: "user", Content: userPrompt},
 		},
-		ResponseFormat: internal.ResponseFormat{Type: "json_object"},
+		ResponseFormat: internal.ResponseFormat{
+			Type: "json_schema",
+			JSONSchema: &internal.JSONSchemaConfig{
+				Name:   "Detail",
+				Schema: json.RawMessage(schemas.DetailSchema),
+				Strict: true,
+			},
+		},
 	}
 	content, err := ai.Chat(ctx, req)
 	if err != nil {

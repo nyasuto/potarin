@@ -99,10 +99,11 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 	}
 	log.Print(req)
 	content, err := ai.Chat(ctx, req)
+	log.Print(content, err)
+
 	if err != nil {
 		return nil, err
 	}
-	log.Print(content)
 
 	var parsed struct {
 		Suggestions []shared.Suggestion `json:"suggestions"`

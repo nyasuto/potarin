@@ -12,9 +12,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>
-        <header className="p-4 bg-gray-100 mb-4">
-          <Link href="/" className="font-bold">
+      <body className="bg-gray-50">
+        <header className="p-4 bg-gradient-to-r from-sky-500 to-green-400 text-white mb-8">
+          <Link href="/" className="font-bold text-xl">
             Potarin
           </Link>
         </header>

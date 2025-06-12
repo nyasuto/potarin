@@ -82,6 +82,7 @@ bun run dev
 
 環境変数 `NEXT_PUBLIC_API_URL` を設定すると、フロントエンドが参照する API サーバー URL を変更できます。
 バックエンドで OpenAI を利用する場合は、プロジェクトルートの `.env.local` に `OPENAI_API_KEY` を設定してください。
+利用するモデルを変更したい場合は、`OPENAI_MODEL` にモデル名を指定します。未設定時は `gpt-4o-mini` が使用されます。
 
 ## 現在の機能
 

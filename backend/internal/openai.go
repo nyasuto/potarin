@@ -49,6 +49,17 @@ type chatResponse struct {
 	} `json:"choices"`
 }
 
+const fallbackModel = "gpt-4o-mini"
+
+// GetModel returns the chat model defined in the environment or a default.
+func GetModel() string {
+	m := os.Getenv("OPENAI_MODEL")
+	if m == "" {
+		return fallbackModel
+	}
+	return m
+}
+
 // LoadEnv loads environment variables from .env.local if present.
 func LoadEnv() {
 	if err := godotenv.Load(".env.local"); err != nil {

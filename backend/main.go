@@ -79,7 +79,7 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 		userPrompt = "今日は天気が良いので、3つの異なるサイクリングコースを提案してください。日付とその季節を考慮してください 本日は六月です"
 	}
 	req := internal.ChatRequest{
-		Model: "gpt-4o",
+		Model: internal.GetModel(),
 		Messages: []internal.Message{
 			{
 				Role: "system",
@@ -120,7 +120,7 @@ func fetchSuggestions(ctx context.Context, ai AIClient, userPrompt string) ([]sh
 func fetchDetail(ctx context.Context, ai AIClient, suggestion shared.Suggestion) (shared.Detail, error) {
 	userPrompt := fmt.Sprintf("タイトル: %s\n説明: %s\nこのコースの詳細を教えてください。", suggestion.Title, suggestion.Description)
 	req := internal.ChatRequest{
-		Model: "gpt-4o",
+		Model: internal.GetModel(),
 		Messages: []internal.Message{
 			{Role: "system", Content: "Return course detail as JSON."},
 			{Role: "user", Content: userPrompt},
